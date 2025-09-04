@@ -85,3 +85,14 @@ export const handleUserPostAction = async (
     }
     return response;
 };
+
+export const handleDeleteUserPostsById = async ( postId: string) => {
+    const response = await apiRequest(
+        'delete',
+        `${BASE_URL}/posts/${postId}`
+    )
+    if (response.type === "error") {
+        throw new Error(response.message || "Post deletion error");
+    }
+    return response;
+};

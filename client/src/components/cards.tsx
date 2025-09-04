@@ -2,13 +2,19 @@ import React from 'react'
 import { FiPlus, FiTrash2 } from 'react-icons/fi';
 import type { PostsProps } from '../util/types';
 
-export const PostsCard: React.FC<{ post: PostsProps }> = ({ post }) => {
+export const PostsCard: React.FC<{ post: PostsProps, onClick: (id: string) => void }> = ({ post, onClick }) => {
+    console.log({post})
     return (
         <div
             className="relative rounded-xl border border-gray-200
-                                bg-white shadow p-6 min-h-[240px] flex flex-col">
+                                bg-white shadow p-6 min-h-[240px] flex flex-col"
+        >
             {/* Delete Icon */}
-            <button className="absolute top-3 right-3 text-gray-300 hover:text-red-400 transition" title="Delete">
+            <button
+                className="absolute top-3 right-3 text-red-400 transition cursor-pointer"
+                title="Delete"
+                onClick={() => onClick(post?.id || '')}
+            >
                 <FiTrash2 size={18} />
             </button>
             <h2 className="text-lg font-semibold text-gray-800 mb-2">{post?.title}</h2>

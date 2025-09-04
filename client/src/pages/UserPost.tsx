@@ -4,7 +4,7 @@ import { FiArrowLeft } from 'react-icons/fi';
 import { useLocation } from 'react-router';
 import { NewPostModal } from '../components/newPostModal';
 import { useQuery } from '@tanstack/react-query';
-import { handleFetchAllPostsByUser, handleUserPostAction } from '../util/request';
+import { handleDeleteUserPostsById, handleFetchAllPostsByUser, handleUserPostAction } from '../util/request';
 import type { newPostFormValuesProps, PostsProps } from '../util/types';
 import { PageLoader } from '../util/loader';
 import { NewPostsCard, PostsCard } from '../components/cards';
@@ -38,6 +38,32 @@ export const UserPost: React.FC = () => {
                     success: response?.type === "success",
                     error: response?.type === "success",
                     message: response?.message || "Post published successfully"
+                });
+                setTimeout(() => {
+                    setShowModal(false);
+                    setPublishing(false)
+                }, 2000);
+            }
+        } catch (error: any) {
+            setPublishing(false)
+            setPublishingStatus({
+                success: false,
+                error: true,
+                message: error?.message || "Error publishing post"
+            });
+        }
+    }
+    const handleDeletePost = async (postId: string) => {
+        setPublishing(true)
+        console.log({postId})
+        try {
+            const response = await handleDeleteUserPostsById(postId);
+            if (response?.showing && response?.type === "success") {
+                refetch();
+                setPublishingStatus({
+                    success: response?.type === "success",
+                    error: response?.type === "success",
+                    message: response?.message || "Post Deleted successfully"
                 });
                 setTimeout(() => {
                     setShowModal(false);
@@ -104,7 +130,7 @@ export const UserPost: React.FC = () => {
                         {/* Post Cards */}
                         {postsData?.data?.map((post: PostsProps, index: any) => (
                             <React.Fragment key={post?.id + index}>
-                                <PostsCard post={post} />
+                                <PostsCard post={post} onClick={handleDeletePost} />
                             </React.Fragment>
                         ))}
                     </div>
