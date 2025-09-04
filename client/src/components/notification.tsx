@@ -4,14 +4,15 @@ import type { NotificationProps } from "../util/types";
 export const Notification: React.FC<NotificationProps> = ({
     message,
     description,
-    type
+    type,
+    resetNotificationType = () => {}
 }) => {
     const [showNotification, setShowNotification] = useState<string>(type);
-
     useEffect(() => {
         setShowNotification(type);
         setTimeout(() => {
             setShowNotification("");
+            resetNotificationType();
         }, 2500);
     }, [type]);
 

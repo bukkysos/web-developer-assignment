@@ -49,5 +49,6 @@ export interface PaginationProps {
 export interface NotificationProps {
     message: string;
     description?: string;
-    type: "success" | "error" | "pending";
+    type: string;
+    resetNotificationType: () => void
 }

@@ -3,7 +3,6 @@ import { FiPlus, FiTrash2 } from 'react-icons/fi';
 import type { PostsProps } from '../util/types';
 
 export const PostsCard: React.FC<{ post: PostsProps, onClick: (id: string) => void }> = ({ post, onClick }) => {
-    console.log({post})
     return (
         <div
             className="relative rounded-xl border border-gray-200

@@ -13,30 +13,37 @@ import { Notification } from '../components/notification';
 export const UserPost: React.FC = () => {
     const [showModal, setShowModal] = useState<boolean>(false);
     const [publishing, setPublishing] = useState<boolean>(false);
-    const [publishingStatus, setPublishingStatus] =
-        useState<{ success: boolean, error: boolean, message: string }>(
-            { success: false, error: false, message: '' }
-        );
     const location = useLocation();
     const myData = location.state;
-
-    const { data: postsData, isLoading, isError, error, isSuccess, status,  refetch } = useQuery({
+    
+    const { data: postsData, isLoading, isError, error, isSuccess, status, refetch } = useQuery({
         queryKey: ['postsByUser', myData?.id],
         queryFn: () => handleFetchAllPostsByUser(`${myData?.id}`),
         enabled: !!myData?.id,
         // placeholderData: (prevData) => prevData,
         refetchOnWindowFocus: false
     });
+    const [publishingStatus, setPublishingStatus] =
+        useState<{ type: string, message: string }>(
+            { type: status || '', message: '' }
+        );
 
     const handlePostNewPost = async (values: newPostFormValuesProps) => {
-        setPublishing(true)
+        if (values?.title.trim() === '' || values?.body.trim() === '') {
+            setPublishingStatus({
+                type: 'succcess',
+                message: "Title and body are required"
+            });
+            return;
+        }
         try {
+            setPublishing(true)
             const response = await handleUserPostAction(myData?.id, values);
             if (response?.showing && response?.type === "success") {
                 refetch();
                 setPublishingStatus({
-                    success: response?.type === "success",
-                    error: response?.type === "success",
+                    type: response?.type,
+                    // error: response?.type === "success",
                     message: response?.message || "Post published successfully"
                 });
                 setTimeout(() => {
@@ -47,22 +54,19 @@ export const UserPost: React.FC = () => {
         } catch (error: any) {
             setPublishing(false)
             setPublishingStatus({
-                success: false,
-                error: true,
+                type: 'error',
                 message: error?.message || "Error publishing post"
             });
         }
     }
     const handleDeletePost = async (postId: string) => {
         setPublishing(true)
-        console.log({postId})
         try {
             const response = await handleDeleteUserPostsById(postId);
             if (response?.showing && response?.type === "success") {
                 refetch();
                 setPublishingStatus({
-                    success: response?.type === "success",
-                    error: response?.type === "success",
+                    type: response?.type,
                     message: response?.message || "Post Deleted successfully"
                 });
                 setTimeout(() => {
@@ -73,8 +77,7 @@ export const UserPost: React.FC = () => {
         } catch (error: any) {
             setPublishing(false)
             setPublishingStatus({
-                success: false,
-                error: true,
+                type: 'error',
                 message: error?.message || "Error publishing post"
             });
         }
@@ -98,7 +101,8 @@ export const UserPost: React.FC = () => {
                     isError ? error?.message ?? publishingStatus?.message :
                         postsData?.message ?? publishingStatus.message
                 }
-                type={status}
+                type={publishingStatus.type}
+                resetNotificationType={() => setPublishingStatus({ type: '', message: '' })}
             />
             {isLoading ? <PageLoader /> :
                 <>
