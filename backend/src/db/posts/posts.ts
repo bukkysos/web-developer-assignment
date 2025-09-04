@@ -1,6 +1,7 @@
 import { connection } from "../connection";
-import { insertPostTemplate, selectPostsTemplate } from "./query-tamplates";
+import { deletePostTemplate, insertPostTemplate, selectPostsTemplate } from "./query-tamplates";
 import { Post } from "./types";
+import { randomUUID } from 'crypto'
 
 export const getPosts = (userId: string): Promise<Post[]> =>
   new Promise((resolve, reject) => {
@@ -14,16 +15,27 @@ export const getPosts = (userId: string): Promise<Post[]> =>
 
 export const addPost = (userId: string, title: string, body: string, created_at: string): Promise<void> =>
   new Promise((resolve, reject) => {
-    connection.run(insertPostTemplate, [userId, title, body, created_at], function (error) {
+    connection.run(insertPostTemplate, [randomUUID(), userId, title, body, created_at], function (error) {
       if (error) {
         reject(error);
       }
       resolve({
-          id: this?.lastID,
-          userId,
-          title,
-          body,
-          created_at,
-        } as unknown as void);
+        id: this?.lastID,
+        userId,
+        title,
+        body,
+        created_at,
+      } as unknown as void);
+    });
+  });
+
+export const deletePostById = (postId: string): Promise<void> =>
+  new Promise((resolve, reject) => {
+    const id = postId;
+    connection.run(deletePostTemplate, [id], function (error) {
+      if (error) {
+        reject(error);
+      }
+      resolve();
     });
   });
