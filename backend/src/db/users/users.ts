@@ -19,19 +19,44 @@ export const getUsersCount = (): Promise<number> =>
     );
   });
 
-export const getUsers = (
+export const getUsers = async (
   pageNumber: number,
   pageSize: number
-): Promise<User[]> =>
-  new Promise((resolve, reject) => {
-    connection.all<User>(
+): Promise<User[]> => {
+  const result = await new Promise((resolve, reject) => {
+     connection.all<User>(
       selectUsersTemplate,
       [pageNumber * pageSize, pageSize],
       (error, results) => {
         if (error) {
-          reject(error);
+          return reject(error);
         }
-        resolve(results);
+        return resolve(results);
       }
     );
-  });
+  }) as User[];
+
+  return buildUsersWithAddresses(result);
+}
+
+/**
+ * @description function to build users with their addresses as sqllite3 returns flat rows
+ * Builds an array of users with their associated addresses from the raw database rows.
+ * @param rows The raw database rows.
+ * @returns An array of users with their addresses.
+ */
+const buildUsersWithAddresses = (rows: any[]): User[] => rows.map(row => ({
+  id: row.id,
+  name: row.name,
+  username: row.username,
+  email: row.email,
+  phone: row.phone,
+  address: {
+    id: row.address_id,
+    userId: row.address_user_id,
+    street: row.address_street,
+    state: row.address_state,
+    city: row.address_city,
+    zipcode: row.address_zipcode,
+  }
+})) as User[];
