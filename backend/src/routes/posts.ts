@@ -26,7 +26,6 @@ router.post("/", async (req: Request, res: Response) => {
 
 router.delete("/:postId", async (req: Request, res: Response) => {
   const postId = req.params.postId;
-  console.log(req.params, 'kkkkkkkkkkk')
 
   if (!postId) {
     res.status(400).send({ status: false, error: "postId is required" });
