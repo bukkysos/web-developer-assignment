@@ -12,7 +12,7 @@ export const Notification: React.FC<NotificationProps> = ({
         setShowNotification(type);
         setTimeout(() => {
             setShowNotification("");
-            resetNotificationType();
+            resetNotificationType && resetNotificationType();
         }, 2500);
     }, [type]);
 

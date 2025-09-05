@@ -4,15 +4,14 @@ import type { PostsProps } from '../util/types';
 
 export const PostsCard: React.FC<{ post: PostsProps, onClick: (id: string) => void }> = ({ post, onClick }) => {
     return (
-        <div
-            className="relative rounded-xl border border-gray-200
-                                bg-white shadow p-6 min-h-[240px] flex flex-col"
+        <div className="relative rounded-xl border border-gray-200
+                bg-white shadow p-6 min-h-[240px] flex flex-col"
         >
             {/* Delete Icon */}
             <button
                 className="absolute top-3 right-3 text-red-400 transition cursor-pointer"
-                title="Delete"
-                onClick={() => onClick(post?.id || '')}
+                    title="Delete"
+                    onClick={() => onClick(post?.id || '')}
             >
                 <FiTrash2 size={18} />
             </button>
@@ -22,7 +21,7 @@ export const PostsCard: React.FC<{ post: PostsProps, onClick: (id: string) => vo
             </p>
         </div>
     )
-}
+};
 
 export const NewPostsCard: React.FC<{ setShowModal: (value: boolean) => void }> = ({ setShowModal }) => {
     return (
@@ -38,4 +37,4 @@ export const NewPostsCard: React.FC<{ setShowModal: (value: boolean) => void }> 
             </div>
         </>
     )
-}
+};

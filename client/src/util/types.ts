@@ -50,5 +50,5 @@ export interface NotificationProps {
     message: string;
     description?: string;
     type: string;
-    resetNotificationType: () => void
+    resetNotificationType?: () => void
 }
