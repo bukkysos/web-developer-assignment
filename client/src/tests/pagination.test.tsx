@@ -4,6 +4,8 @@ import { Pagination } from '../components/pagination';
 // import { Pagination } from '../Pagination';
 import { describe, expect, it, vi } from 'vitest';
 
+import '@testing-library/jest-dom';
+
 describe('Pagination Component', () => {
   const setup = (currentPage: number, totalPages: number, onPageChange = vi.fn()) => {
     render(<Pagination currentPage={currentPage} totalPages={totalPages} onPageChange={onPageChange} />);
