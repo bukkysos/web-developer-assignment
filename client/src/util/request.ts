@@ -53,7 +53,21 @@ const apiRequest = async (method: string, url: string, payload?: any): Promise<A
 };
 
 export const handleFetchUsers = async (url: string) => {
-    const response = await apiRequest('get', url);
+    const response = await apiRequest(
+        'get',
+        `${BASE_URL}/${url}`
+    );
+    if (response.type === "error") {
+        throw new Error(response.message || "Unknown error");
+    }
+    return response;
+};
+
+export const handleFetchUserCount = async (url: string) => {
+    const response = await apiRequest(
+        'get',
+        `${BASE_URL}/users/count`
+    );
     if (response.type === "error") {
         throw new Error(response.message || "Unknown error");
     }
@@ -78,7 +92,7 @@ export const handleUserPostAction = async (
     const response = await apiRequest(
         'post',
         `${BASE_URL}/posts`,
-        {...payload, userId}
+        { ...payload, userId }
     )
     if (response.type === "error") {
         throw new Error(response.message || "Post submission error");
@@ -86,7 +100,7 @@ export const handleUserPostAction = async (
     return response;
 };
 
-export const handleDeleteUserPostsById = async ( postId: string) => {
+export const handleDeleteUserPostsById = async (postId: string) => {
     const response = await apiRequest(
         'delete',
         `${BASE_URL}/posts/${postId}`

@@ -1,5 +1,5 @@
-import React, { useState } from 'react'
-import { handleFetchUsers } from '../util/request';
+import React, { useCallback, useEffect, useState } from 'react'
+import { handleFetchUserCount, handleFetchUsers } from '../util/request';
 import { useQuery } from '@tanstack/react-query';
 import { Pagination } from '../components/pagination';
 import { Table } from '../components/table';
@@ -7,16 +7,25 @@ import { Notification } from '../components/notification';
 
 export const UsersList: React.FC = () => {
     const [pageNo, setPageNo] = useState<number>(1);
+    const [userRecordCount, setUserRecordCount] = useState<number>(1);
 
     const { data: usersData, isLoading, isError, error, status, isSuccess } = useQuery({
         queryKey: ['users', pageNo],
-        queryFn: () => handleFetchUsers(`http://localhost:3001/users?pageNumber=${pageNo - 1}&pageSize=4`),
+        queryFn: () => handleFetchUsers(`users?pageNumber=${pageNo - 1}&pageSize=4`),
         enabled: !!pageNo,
         placeholderData: (prevData) => prevData,
         refetchOnWindowFocus: false
     });
 
-    console.log({usersData})
+    const handleUserCountUpdate = useCallback(async () => {
+        const usersCount = await handleFetchUserCount('users/count');
+
+        setUserRecordCount(usersCount.data.count / 4)
+    }, [])
+
+    useEffect(() => {
+        handleUserCountUpdate()
+    }, [])
 
     return (
         <div className="min-h-screen w-screen bg-white content-center px-2 sm:px-4 md:px-8 py-6 md:py-8">
@@ -36,7 +45,7 @@ export const UsersList: React.FC = () => {
             {usersData?.data &&
                 <Pagination
                     currentPage={pageNo}
-                    totalPages={usersData?.data?.pagination?.totalPages}
+                    totalPages={userRecordCount}
                     onPageChange={setPageNo}
                 />
             }
